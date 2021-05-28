@@ -1,0 +1,10 @@
+preprocess:
+  detection: clahe
+  recognition: clahe
+  clahe:
+    clipLimit: 2.0
+    tileGridSize: [8, 8]
+debug:
+  output: debug
+  draw_boxes: false
+  save_chips: false

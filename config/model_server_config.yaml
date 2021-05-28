@@ -1,0 +1,111 @@
+# ==========================
+# ログ設定
+# ==========================
+logger:
+  # ロガーの閾値
+  level: INFO 
+  # ログ保存箇所(原則dockerログを使い、別ファイルに保存しない)
+  path: null
+
+# ==========================
+# AI推論サーバ設定
+# ==========================
+grpc:
+  # サーバのIP
+  ip: 127.0.0.1
+  # 最大スレッド数(アクセラレータの場合、原則1とする)
+  max_workers: 1
+  # 最大並列処理数(アクセラレータの場合、原則1とする)
+  max_concurrent_rpcs: 1
+  # 最大メッセージサイズ
+  max_msg_len: 10
+  # ポート
+  port: 50052
+  test_trials: 2
+  test_cooldown: 0.5
+  timeout:
+    # アクセラレータ動作確認の最大待ち時間
+    check: 1
+    # 文字検出処理の最大待ち時間
+    dense: 2
+    # 文字認識処理の最大待ち時間
+    ctpnp: 6 
+
+# ==========================
+# AIモデル設定
+# ==========================
+
+# モデルの保存フォルダー名
+model_folder: openvino_models
+
+# 動作確認用モデル
+check_model:
+  # モデルのフォルダー名
+  model_folder: testing_models/FP16
+  # モデルのファイル名
+  model: test
+  # テストデータのフォルダー名
+  data_folder: testing_models/data
+  # テスト入力のファイル名
+  input:
+    - test_in_fp16_0.npy
+    - test_in_fp16_1.npy
+  # 正しい出力のファイル名
+  ref_output:
+    - test_out_fp16_0.npy
+    - test_out_fp16_1.npy
+  # 動作確認対象デイバイス
+  dev: MYRIAD
+
+# 文字検出モデル
+ctpnp:
+  # モデル名(拡張子抜き)
+  model_path:
+    # A6サイズ用モデル
+    portrait: ctpn-pixel-stack2-v2-1376-1024
+    # カード型用モデル
+    landscape: ctpn-pixel-stack2-v2-608-960
+  # 推論用デバイス CPU/MYRAID/ARM
+  dev: MYRIAD
+  # 計算精度
+  precision: FP32
+
+dbnet:
+  armnn:
+    landscape:
+      model_path: landscape
+      preprocess: null
+      backend: GpuAcc
+    portrait:
+      model_path: portrait
+      preprocess: null
+      backend: GpuAcc
+
+# 文字認識モデル
+dense8:
+  # 使用したいモデルのリスト(拡張子抜き)
+  model_list:
+  - all-conv-e97-32-128
+  - all-conv-e97-32-256
+  - all-conv-e97-32-512
+  - all-conv-e97-32-896
+  # 推論用デバイス CPU/MYRAID/ARM
+  dev: MYRIAD
+  # 計算精度
+  precision: FP32
+  armnn:
+    model_path:
+    - Recog192
+    - Recog1024
+    - Recog1408
+    backend: GpuAcc
+    preprocess: null
+
+
+# ==========================
+# デバッグ用設定
+# ==========================
+debug:
+  CTPNP:
+    raw_boxes: false 
+    connected_boxes: false

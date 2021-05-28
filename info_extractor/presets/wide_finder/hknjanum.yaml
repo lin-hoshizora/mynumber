@@ -1,0 +1,17 @@
+!WideFinder
+ef: !!python/name:info_extractor.extract.get_insurer_num ''
+mf: !!python/name:info_extractor.match.insurer_match ''
+scores: !!python/object/apply:numpy.core.multiarray._reconstruct
+  args:
+  - !!python/name:numpy.ndarray ''
+  - !!python/tuple [0]
+  - !!binary |
+    Yg==
+  state: !!python/tuple
+  - 1
+  - !!python/tuple [0]
+  - !!python/object/apply:numpy.dtype
+    args: [f8, false, true]
+    state: !!python/tuple [3, <, null, null, null, -1, -1, 0]
+  - false
+  - !!binary ""
