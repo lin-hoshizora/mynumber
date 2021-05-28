@@ -1,3 +1,4 @@
+from time import process_time
 import unicodedata
 import pickle
 import cv2
@@ -37,13 +38,22 @@ class SimpleReader(BaseReader):
     img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
     self.info = {}
     boxes, scores = self.find_texts(img)
+
     rotate = self.need_rotate(boxes)
+
+    print(rotate)
     if rotate:
       # handle orientation for card type
       boxes, scores = self.find_texts(img_ori)
-    recog_results = self.read_texts(boxes=boxes)
-    texts = self.group_textlines(recog_results)
 
+    try:
+      recog_results = self.read_texts(boxes=boxes)
+      texts = self.group_textlines(recog_results)
+    except:
+      cv2.imwrite('debug_img.jpg',self.img)
+      with open('./boxes.pkl','wb') as f:
+        pickle.dump(boxes,f)
+      raise Exception('Boxes or texts are somthing wrong, please check debug_boxes.pkl and debug_img.jpg')
     # simple check to see if upside down
     if self.need_retry(texts):
       # flip upsidedown and retry
@@ -74,9 +84,12 @@ class SimpleReader(BaseReader):
       self.analyzer.fit(texts)
 
     for l in texts:
+      print(l)
       print(l[-1])
+    print(self.analyzer.info)
 
     self.info = self.analyzer.info
+    self.check_multi_HKJnum(texts)
     return "公費"
 
   def extract_info(self, key: str):
@@ -91,3 +104,40 @@ class SimpleReader(BaseReader):
         text = str(text)
       result = {"text": text, "confidence": 1.0}
       return result
+
+  def check_multi_HKJnum(self,texts):
+    for idx, line in enumerate(texts):
+      res = re.findall('(番号)',line[-1])
+      if res:
+  #         print("番号発見！")
+  #         print(f"prev line:{reader.texts[idx-1][-1]}")
+        line1_2 = texts[idx-1][-1]+line[-1]
+        hkj = re.sub('\d','',line1_2)
+        print(hkj)
+        nums=[]
+        if hkj =="公費負担者番号":    
+          for txt in line[:-1]:
+            num =  re.sub('\D','',txt[0])
+            if num:
+              print(num)
+              nums.append(num)
+          for txt in texts[idx-1][:-1]:
+            num =  re.sub('\D','',txt[0])
+            if num:
+              print(num)
+              nums.append(num)
+          self.info['HknjaNum'] = nums
+        if hkj =="受給者番号":
+          for txt in line[:-1]:
+            num =  re.sub('\D','',txt[0])
+            if num:
+              print(num)
+              nums.append(num)
+          for txt in texts[idx-1][:-1]:
+            num =  re.sub('\D','',txt[0])
+            if num:
+              print(num)
+              nums.append(num)
+          self.info['Num'] = nums
+  #         print(f"{idx}:\t",line[-1])
+
