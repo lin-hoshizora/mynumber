@@ -1,0 +1,1 @@
+!SimpleFinder {extract_method: get_one_date, match_method: valid_until_match}

@@ -1,0 +1,6 @@
+!DatesFinder
+extract_method: get_date
+info: {}
+match_methods: {Birthday: birthday_match, YukoEdYmd: valid_until_match, YukoStYmd: valid_from_match, KofuYmd: kofu_match}
+scores: {}
+texts: {}

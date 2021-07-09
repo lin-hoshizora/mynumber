@@ -1,0 +1,1 @@
+!SimpleFinder {extract_method: get_insurer_num, match_method: insurer_match}

@@ -58,6 +58,7 @@ check_model:
   dev: MYRIAD
 
 # 文字検出モデル
+
 ctpnp:
   # モデル名(拡張子抜き)
   model_path:
@@ -75,11 +76,13 @@ dbnet:
     landscape:
       model_path: landscape
       preprocess: null
-      backend: GpuAcc
+      # backend: GpuAcc
+      backend: CpuAcc
     portrait:
       model_path: portrait
       preprocess: null
-      backend: GpuAcc
+      # backend: GpuAcc
+      backend: CpuAcc
 
 # 文字認識モデル
 dense8:
@@ -98,7 +101,7 @@ dense8:
     - Recog192
     - Recog1024
     - Recog1408
-    backend: GpuAcc
+    backend: CpuAcc
     preprocess: null
 
 

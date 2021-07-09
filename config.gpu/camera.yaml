@@ -1,0 +1,12 @@
+camera:
+  path: /dev/v4l/by-id/usb-Generic_USB_Camera_200901010001-video-index0
+  width: 2592
+  height: 1944
+  ae: 1
+  exposure: 100
+
+zmq:
+  port: 5556
+  sleep:
+    check: 0.01
+    flush: 0.1

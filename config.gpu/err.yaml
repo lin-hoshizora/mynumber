@@ -1,0 +1,33 @@
+# Websocketサーバエラーリスト
+
+non-text:
+  ErrCode: E001
+  ErrMsg: "Non-text recieved"
+
+non-json:
+  ErrCode: E002
+  ErrMsg: "Cannot decode JSON"
+
+invalid-json:
+  ErrCode: E003
+  ErrMsg: "Unsupported JSON content"
+
+scan_err:
+  ErrCode: E004
+  ErrMsg: "Scanner Failed."
+
+read_err:
+  ErrCode: E005
+  ErrMsg: "Cannot read image."
+
+save_err:
+  ErrCode: E006
+  ErrMsg: "Cannot save image."
+
+ocr_err:
+  ErrCode: E007
+  ErrMsg: "OCR failed."
+
+no_scan:
+  ErrCode: E008
+  ErrMsg: "Info extraction before scan."

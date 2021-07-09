@@ -9,6 +9,7 @@ import yaml
 import websockets
 from apps import MyNumReader, Calibrator
 from apps.insurance_reader import SimpleReader
+from ocr2.info_extractor.main_analyzer import MainAnalyzer
 from apps.utils.image import read_scope
 from info_extractor import Analyzer
 from utils import get_logger, get_timestamp, handle_err_ws, load_conf, validate_json
@@ -51,7 +52,8 @@ async def serve_ocr(websocket, path):
 
       t0 = time.time()
       try:
-        img = cap.read()
+        # img = cap.read()
+        img = cv2.imread('2021_04_20_14_53_43.jpg')
         cv2.imwrite('test.jpg',img)##########################################
         logger.info(f'Capture time: {time.time() - t0 :.2f}s')
       except Exception as e:
@@ -84,6 +86,10 @@ async def serve_ocr(websocket, path):
 
         elif json_req["Scan"] == "MyNumber":
           syukbn = reader.ocr(img, category=json_req["Scan"])
+        elif json_req["Scan"] == "Hkn":
+          syukbn = simple_reader.ocr(img)
+          reader.info = simple_reader.main_info
+          reader.syukbn = "主保険"
         else:
           syukbn = simple_reader.ocr(img)
           reader.info = simple_reader.info
@@ -142,7 +148,7 @@ if not log_folder.exists():
 cap = CamClient(cam_conf)
 client = ModelClientMock(logger=logger)
 reader = MyNumReader(logger=logger, client=client, conf=mynum_conf)
-simple_reader = SimpleReader(logger=logger, client=client, analyzer=Analyzer(), conf=insurance_conf)
+simple_reader = SimpleReader(logger=logger, client=client, analyzer=Analyzer(),main_analyzer=MainAnalyzer(), conf=insurance_conf)
 calibrator = Calibrator(logger=logger, client=client, conf=calib_conf)
 
 # start server

@@ -6,9 +6,8 @@ preprocess:
     tileGridSize: [8, 8]
 debug:
   output: debug
-  draw_max_loc: false
-  #draw_boxes: false
-  draw_boxes: True
-  draw_num_roi: false
-  draw_date_roi: false
-  save_chips: false
+  draw_max_loc: true
+  draw_boxes: true
+  draw_num_roi: true
+  draw_date_roi: true
+  save_chips: true

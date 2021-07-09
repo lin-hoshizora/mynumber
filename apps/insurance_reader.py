@@ -1,3 +1,4 @@
+from re import M
 from time import process_time
 import unicodedata
 import pickle
@@ -10,9 +11,10 @@ from info_extractor.date import Date
 
 
 class SimpleReader(BaseReader):
-  def __init__(self, client, analyzer, logger, conf):
+  def __init__(self, client, analyzer, main_analyzer,logger, conf):
     super().__init__(client=client, logger=logger, conf=conf)
     self.analyzer = analyzer
+    self.main_analyzer = main_analyzer
 
   def need_rotate(self, boxes):
     xs = boxes[:, 0::2]
@@ -34,11 +36,12 @@ class SimpleReader(BaseReader):
 
 
   def ocr(self, img):
+    img_rotate = None
     img_ori = img.copy()
     img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
     self.info = {}
+    self.main_info = {}
     boxes, scores = self.find_texts(img)
-
     rotate = self.need_rotate(boxes)
 
     print(rotate)
@@ -62,6 +65,7 @@ class SimpleReader(BaseReader):
       boxes[:, 0::2] = self.img.shape[1] - 1 - boxes[:, 0::2]
       boxes[:, 1::2] = self.img.shape[0] - 1 - boxes[:, 1::2]
       boxes = boxes[:, [2, 3, 0, 1]]
+      # print(boxes)
       recog_results = self.read_texts(boxes=boxes)
       texts = self.group_textlines(recog_results)
 
@@ -84,11 +88,23 @@ class SimpleReader(BaseReader):
       self.analyzer.fit(texts)
 
     for l in texts:
-      print(l)
+      # print(l)
       print(l[-1])
-    print(self.analyzer.info)
+    print('base',self.analyzer.info)
 
+
+    #main_analyzer
+    hknjanum = self.main_analyzer.finders["HknjaNum"].extract(texts)
+    print(hknjanum)
+    # for tag in self.main_analyzers:
+    
+    self.main_analyzer.info.clear()
+    self.main_analyzer.fit(texts)
+    print('main',self.main_analyzer.info)
+
+    self.main_info = self.main_analyzer.info
     self.info = self.analyzer.info
+    
     self.check_multi_HKJnum(texts)
     return "公費"
 
@@ -96,12 +112,15 @@ class SimpleReader(BaseReader):
     """
     Borrowed from mainstream insurance reader
     """
+    print('extract_info')
     if key == 'SyuKbn':
       return "公費"
     else:
       text = self.info.get(key, None)
       if isinstance(text, Date):
+        print('date2str')
         text = str(text)
+      text = str(text)
       result = {"text": text, "confidence": 1.0}
       return result
 
@@ -141,3 +160,9 @@ class SimpleReader(BaseReader):
           self.info['Num'] = nums
   #         print(f"{idx}:\t",line[-1])
 
+
+
+  
+
+    
+      

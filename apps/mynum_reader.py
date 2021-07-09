@@ -368,5 +368,6 @@ class MyNumReader(BaseReader):
       text = self.info.get(key, None)
       if isinstance(text, Date):
         text = str(text)
+      text = str(text)
       result = {"text": text, "confidence": 1.0}
       return result

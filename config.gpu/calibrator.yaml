@@ -1,0 +1,17 @@
+preprocess:
+  detection: clahe
+  recognition: clahe
+  clahe:
+    clipLimit: 2.0
+    tileGridSize: [8, 8]
+match:
+  - 令和1年3月4日
+  - 2029年3月4日
+  - '23456789'
+crop_margin:
+  y: [75, 75]
+  x: [75, 125]
+debug:
+  output: debug
+  draw_boxes: false
+  save_chips: false
