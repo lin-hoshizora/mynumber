@@ -10,6 +10,22 @@ from info_extractor import Analyzer
 from info_extractor.date import Date
 
 
+def match(img, target, method=cv2.TM_CCOEFF_NORMED, blur=5):
+  img_blur = cv2.GaussianBlur(img, (blur, blur), 0)
+  res = cv2.matchTemplate(img_blur, target, method)
+  _, max_v, _, max_loc = cv2.minMaxLoc(res)
+  return max_v, max_loc
+def rotate_and_validate(img,mark):
+    tm_threshold = 0.6
+    h, w = img.shape[:2]
+    img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    ori_max, max_loc = match(img_gray[:h//2, w//2:], mark)
+    if ori_max < tm_threshold:
+        return img, False
+
+
+
+
 class SimpleReader(BaseReader):
   def __init__(self, client, analyzer, main_analyzer,logger, conf):
     super().__init__(client=client, logger=logger, conf=conf)
@@ -36,7 +52,7 @@ class SimpleReader(BaseReader):
 
 
   def ocr(self, img):
-    img_rotate = None
+    img_res = None
     img_ori = img.copy()
     img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
     self.info = {}
@@ -48,7 +64,6 @@ class SimpleReader(BaseReader):
     if rotate:
       # handle orientation for card type
       boxes, scores = self.find_texts(img_ori)
-
     try:
       recog_results = self.read_texts(boxes=boxes)
       texts = self.group_textlines(recog_results)
@@ -90,22 +105,30 @@ class SimpleReader(BaseReader):
     for l in texts:
       # print(l)
       print(l[-1])
+
     print('base',self.analyzer.info)
-
-
-    #main_analyzer
-    hknjanum = self.main_analyzer.finders["HknjaNum"].extract(texts)
-    print(hknjanum)
-    # for tag in self.main_analyzers:
-    
+   
     self.main_analyzer.info.clear()
     self.main_analyzer.fit(texts)
     print('main',self.main_analyzer.info)
+
+
 
     self.main_info = self.main_analyzer.info
     self.info = self.analyzer.info
     
     self.check_multi_HKJnum(texts)
+
+
+    #find usagi test
+    # self.mark = cv2.imread('mynum_mark_processed.jpg', cv2.IMREAD_GRAYSCALE)
+    # self.mark_flip = cv2.rotate(self.mark, cv2.ROTATE_180)
+    # img_gray = cv2.cvtColor(self.img, cv2.COLOR_RGB2GRAY)
+    # h, w = self.img.shape[:2]
+    # ori_max, max_loc = match(img_gray[:h//2, w//2:], self.mark)
+    # flip_max, max_loc_flip = match(img_gray[h//2:, :w//2], self.mark_flip)
+    # print('125  ',ori_max,max_loc,flip_max,max_loc_flip)
+
     return "公費"
 
   def extract_info(self, key: str):

@@ -219,7 +219,7 @@ class MyNumReader(BaseReader):
 	              code3 = code3[1] + code3
             elif code3[2] == code3[1]:
               code3 = code3 + code3[1]
-            codes[-1] = code3          
+            codes[-1] = code3
           ##
           self.info['Code'] = codes[-1]
           self.prob['Code'] = min(l[0][1])

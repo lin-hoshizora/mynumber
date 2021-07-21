@@ -9,9 +9,13 @@ import yaml
 import websockets
 from apps import MyNumReader, Calibrator
 from apps.insurance_reader import SimpleReader
-from ocr2.info_extractor.main_analyzer import MainAnalyzer
+
 from apps.utils.image import read_scope
+
 from info_extractor import Analyzer
+from ocr2.info_extractor.main_analyzer import MainAnalyzer
+
+
 from utils import get_logger, get_timestamp, handle_err_ws, load_conf, validate_json
 from camera import CamClient
 from model_serving import ModelClientMock
@@ -53,7 +57,7 @@ async def serve_ocr(websocket, path):
       t0 = time.time()
       try:
         # img = cap.read()
-        img = cv2.imread('2021_04_20_14_53_43.jpg')
+        img = cv2.imread('DSC_0030_LI-scaled.jpg')
         cv2.imwrite('test.jpg',img)##########################################
         logger.info(f'Capture time: {time.time() - t0 :.2f}s')
       except Exception as e:
