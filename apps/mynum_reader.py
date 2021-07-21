@@ -254,7 +254,7 @@ class MyNumReader(BaseReader):
     img, valid = self.rotate_and_validate(img)
     if self.debug["draw_max_loc"]: self.draw_max_loc(img)
     if valid:
-      counter = 0;
+      counter = 0
       while counter < self.n_retry:
         counter += 1
         self.syukbn = "マイナンバーカード"
