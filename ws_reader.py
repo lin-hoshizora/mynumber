@@ -20,10 +20,9 @@ INFO = {
 
 async def ocr():
   async with websockets.connect("ws://localhost:8766") as websocket:
-    # await websocket.send('{"Scan": "Insurance"}')
-    
+    # await websocket.send('{"Scan": "Insurance"}')    
     # await websocket.send('{"Scan": "MyNumber"}')
-    await websocket.send('{"Scan": "Hkn"}')
+    await websocket.send('{"Scan": "shuhoken"}')
     res = await websocket.recv()
     res = json.loads(res)
     print(res)

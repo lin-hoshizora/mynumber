@@ -57,7 +57,7 @@ async def serve_ocr(websocket, path):
       t0 = time.time()
       try:
         # img = cap.read()
-        img = cv2.imread('DSC_0030_LI-scaled.jpg')
+        img = cv2.imread('2021_04_20_14_53_43.jpg')
         cv2.imwrite('test.jpg',img)##########################################
         logger.info(f'Capture time: {time.time() - t0 :.2f}s')
       except Exception as e:
@@ -90,7 +90,7 @@ async def serve_ocr(websocket, path):
 
         elif json_req["Scan"] == "MyNumber":
           syukbn = reader.ocr(img, category=json_req["Scan"])
-        elif json_req["Scan"] == "Hkn":
+        elif json_req["Scan"] == "shuhoken":
           syukbn = simple_reader.ocr(img)
           reader.info = simple_reader.main_info
           reader.syukbn = "主保険"
