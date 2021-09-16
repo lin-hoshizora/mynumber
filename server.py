@@ -57,8 +57,8 @@ async def serve_ocr(websocket, path):
       t0 = time.time()
       try:
         # img = cap.read()
-        img = cv2.imread('2021_04_20_14_53_43.jpg')
-        cv2.imwrite('test.jpg',img)##########################################
+        img = cv2.imread('ws_reader.jpg')
+        #cv2.imwrite('test.jpg',img)##########################################
         logger.info(f'Capture time: {time.time() - t0 :.2f}s')
       except Exception as e:
         logger.error(f'Capture Error: {str(e)}')
