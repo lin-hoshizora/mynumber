@@ -303,12 +303,15 @@ class MyNumReader(BaseReader):
 
         # num
         chip, box = self.get_num_chip(chip_img, boxes)
+        num_box = box
 
         num_line = self.read_single_line(chip, box, num_only=True)
         if len(num_line[-1]) < 4:
           self.logger.warning('Fewer than 4 chars recognied in num roi, sharpen and try again')
           chip = sharpen(chip)
           num_line = self.read_single_line(chip, box, num_only=True)
+
+
         if num_line[0][1].size > 0:
           if num_line[0][1].min() < 0.95:
             self.logger.warning('Low confidence for num, sharpen and try again')
@@ -320,6 +323,18 @@ class MyNumReader(BaseReader):
                 num_line = num_line_new
             else:
               self.logger.warning('sharpen result has lower confidence, discarded')
+        if len(num_line[-1]) < 4:
+          self.logger.warning('Fewer than 4 chars recognied in num roi, re_crop and try again')
+          print(chip.shape)
+          l,r = self.re_crop_num_chip(chip)
+          # temp_chip = chip_img[num_box[1]:num_box[3], num_box[0]:num_box[2]]
+          bias = 10
+          l = max(l -bias,0)
+          r = min(r +bias,chip.shape[1])
+          new_num_chip = chip[:,l:r]
+          cv2.imwrite('num_chip.jpg',new_num_chip)
+          print(new_num_chip.shape)
+          num_line = self.read_single_line(new_num_chip, num_box, num_only=True)
 
         if len(num_line[-1]) > 0:
           texts.append(num_line)
@@ -354,9 +369,24 @@ class MyNumReader(BaseReader):
     except:
         with open('./debug/texts-all'+name+'.txt','w') as f:
             f.write('1\n')
-
-
     return self.syukbn
+
+
+
+  def re_crop_num_chip(self,img):
+    gray_img = cv2.cvtColor(img.copy(),cv2.COLOR_RGB2GRAY)
+    code_line = gray_img[gray_img.shape[0]//2,:]
+    avg = np.sum(gray_img)//gray_img.reshape([-1]).shape[0]
+    #left
+    value = code_line[code_line<avg][0]
+    l_idx = list(code_line).index(value)
+    #right
+    value = code_line[code_line<avg][-1]
+    r_idx = len(code_line)-list(code_line[::-1]).index(value)
+    print(l_idx,r_idx)
+    return l_idx,r_idx
+
+
 
   def extract_info(self, key: str):
     """
@@ -368,6 +398,5 @@ class MyNumReader(BaseReader):
       text = self.info.get(key, None)
       if isinstance(text, Date):
         text = str(text)
-      text = str(text)
       result = {"text": text, "confidence": 1.0}
       return result
