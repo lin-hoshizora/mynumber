@@ -119,23 +119,12 @@ class SimpleReader(BaseReader):
     
     self.check_multi_HKJnum(texts)
 
-
-    #find usagi test
-    # self.mark = cv2.imread('mynum_mark_processed.jpg', cv2.IMREAD_GRAYSCALE)
-    # self.mark_flip = cv2.rotate(self.mark, cv2.ROTATE_180)
-    # img_gray = cv2.cvtColor(self.img, cv2.COLOR_RGB2GRAY)
-    # h, w = self.img.shape[:2]
-    # ori_max, max_loc = match(img_gray[:h//2, w//2:], self.mark)
-    # flip_max, max_loc_flip = match(img_gray[h//2:, :w//2], self.mark_flip)
-    # print('125  ',ori_max,max_loc,flip_max,max_loc_flip)
-
     return "公費"
 
   def extract_info(self, key: str):
     """
     Borrowed from mainstream insurance reader
     """
-    print('extract_info')
     if key == 'SyuKbn':
       return "公費"
     else:
@@ -143,7 +132,6 @@ class SimpleReader(BaseReader):
       if isinstance(text, Date):
         print('date2str')
         text = str(text)
-      text = str(text)
       result = {"text": text, "confidence": 1.0}
       return result
 

@@ -125,7 +125,7 @@ async def serve_ocr(websocket, path):
         if isinstance(meta_v, dict):
           for field in meta_v:
             res_json[meta_k][field] = reader.extract_info(field)
-            print(field, res_json[meta_k][field])
+            print(field, res_json[meta_k][field],res_json[meta_k][field]['text'],type(res_json[meta_k][field]['text']))
       res_str = json.dumps(res_json)
       #with open(str(log_folder / (sess_id + '_info.json')), 'w', encoding='utf-8') as f:
       #  json.dump(res_json, f)

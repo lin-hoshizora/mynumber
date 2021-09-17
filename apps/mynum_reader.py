@@ -396,7 +396,7 @@ class MyNumReader(BaseReader):
       return self.syukbn
     else:
       text = self.info.get(key, None)
-      if isinstance(text, Date):
+      if not isinstance(text, list) and text!=None and not isinstance(text, str):
         text = str(text)
       result = {"text": text, "confidence": 1.0}
       return result
