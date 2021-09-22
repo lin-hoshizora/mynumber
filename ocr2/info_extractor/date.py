@@ -9,6 +9,23 @@ ERA_OFFSET = {
 }
 
 
+MONTH_LAST_DAY = {
+    '01':'31',
+    '02':'28',
+    '03':'31',
+    '04':'30',
+    '05':'31',
+    '06':'30',
+    '07':'31',
+    '08':'31',
+    '09':'30',
+    '10':'31',
+    '11':'30',
+    '12':'31',
+}
+
+
+
 class Date:
   """Date class to hold year, month, day, and can output date string.
 
@@ -44,6 +61,7 @@ class Date:
     self.d = date
     self.y = str(int(year) + ERA_OFFSET[era])
     self.jpy = year if era != "w" else None
+    self.check_last_day()
 
   def western_str(self):
     """Generates date string using western year."""
@@ -63,3 +81,10 @@ class Date:
 
   def __str__(self):
     return self.western_str()
+
+  def check_last_day(self):
+    if str(self.d) == '99':
+      if str(self.m.zfill(2)) == '02' and int(self.y)%4 ==0:
+          self.d=29
+      else:
+          self.d = MONTH_LAST_DAY[str(self.m.zfill(2))]
